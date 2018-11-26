@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Homework 7</title>
+	</head>
+
+	<body>
+		<h1>Mario Level Generation</h1>
+		<p>Procedural content generation is the use of algorithms (procedures) to create novel, and sometimes customized, game content from scratch. Examples of PCG include generation of levels, maps, tree, cityscapes, weapons, monsters, and quests. PCG is often used as a design-time tool to roughly sketch out level content to be refined by human designers. PCG can also be done at run-time to incorporate individual player differences such as skills or preferences. In this project, we look at run-time PCG to create Mario Bros. game levels customized to individual players’ play styles. This includes (a) learning a model of the player’s play style, and (b) using the model to create a custom level. Fortunately, the first part is already done for you. You must focus on designing and implementing algorithms that use the player information to create something that will evaluate well.</p>
+		<p>This project will be using the <a href="http://www.marioai.org/LevelGeneration">2011 IEEE Super Mario Bros. Competition infrastructure (Level Generation Track)</a>. The description of the competition and some documentation can be found there.</p>
+		<img src="mariolevel.png" />
+		<p>You will write a procedural content generator in the provided Mario Bros. game engine that optimizes level content for different types of players such as those who like to jump, like to collect coins, or like to kill enemies. You will implement a genetic algorithm to tune the layout of the Mario Bros. level.</p>
+		<hr />
+		<h2>What you need to know</h2>
+		<p>The Mario Bros. engine is written in Java. You will find the source code in the src/ directory.</p>
+		<p>You will modify MyDNA.java and MyLevelGenerator.java to implement a genetic algorithm in order to satisfy a variety of &quot;player profiles&quot;. Each player profile is an evaluation function focused on a specific type of potential player. You are provided with four player profiles: </p>
+		<ul>
+			<li>Scrooge: loves coins</li>
+			<li>Jumper: loves jumping</li>
+			<li>Killer: loves having to kill enemies </li>
+			<li>KillerCollector: loves killing enemies and collecting coins</li>
+		</ul>
+		<p>Each evaluation function for each player profile returns a value between 0-1 (inclusive) to demonstrate how much that player profile &quot;likes&quot; a given level. </p>
+		<p><strong>dk.itu.mario.engine.level.DNA:</strong></p>
+		<p>This object contains the chromosome representation used by the genetic algorithm. It represents an individual in the population. This is an abstract base class for MyDNA.</p>
+		<p>Member variables:</p>
+		<ul>
+			<li>chromosome: the default string representation for the DNA.</li>
+			<li>fitness: the fitness of the individual represented by this DNA.</li>
+			<li>length: the length of the level to be generated from this DNA. Not used.</li>
+		</ul>
+		<p>Member functions:</p>
+		<ul>
+			<li>getGenotype(): return the genotype string.</li>
+			<li>setGenotype(string): set the genotype string.</li>
+			<li>getFitness(): return the fitness.</li>
+			<li>setFitness(double): set the fitness.</li>
+			<li>setLength(int): set the level length.</li>
+			<li>getLength(): return the level length.</li>
+			<li>compareTo(DNA): Return 0 if this object has the same fitness as the argument passed in. Return -1 if this object has lower fitness than the argument passed in . Return +1 if this object has greater fitness than the argument passed in. Used by Collections.sort().</li>
+		</ul>
+		<p><strong>dk.itu.mario.engine.level.MyDNA:</strong></p>
+		<p>This is a specific version of DNA that will be used for your Mario level generation implementation. You must complete this class. A string-based representation for levels is already outlined for you; you should use the constants defined in this file to create strings that represent levels. If you prefer, you can implement an alternate DNA representation for levels instead of the provided representation.</p>
+		<ul>
+			<li>mutate(): Return a copy of this DNA object that has been changed in some small way. Do not change the MyDNA object by side-effect. You should make a copy of the current object, make a change to the copy, and return the copy. <strong>You will complete this function.</strong></li>
+			<li>crossover(mate): Cross this MyDNA object with another MyDNA object passed in. Return one or more children. <strong>You will complete this function.</strong></li>
+			<li>toString(): convert this object into a string. By default, this returns the genotype string. However, for debugging purposes you may want to modify this function. <strong>Modifying this function is optional.</strong></li>
+			<li>compareTo(DNA): Return 0 if this object has the same fitness as the argument passed in. Return -1 if this object has lower fitness than the argument passed in . Return +1 if this object has greater fitness than the argument passed in. Used by Collections.sort(). <strong>Modifying this function is optional; it only needs to be modified if MyDNA uses some means of computing fitness other than storing it in the fitness member variable inherited from DNA.</strong></li>
+		</ul>
+		<p><strong>dk.itu.mario.engine.level.MyLevel:</strong></p>
+		<p>This object places the blocks of the level. It converts a MyDNA object into a structure that can be rendered. In genetic algorithm terms, MyDNA is the genotype and MyLevel is the phenotype, the organisms that manifests when the chromosome is activated.</p>
+		<ul>
+			<li>create(dna, type): Converts the MyDNA into a level. This function has been implemented for you using the DNA characters defined in MyDNA.java. However, you may optionally choose to modify it and/or create an alternate DNA representation.</li>
+			<li>setBlock(x,y,byte-block-value): Sets the value of the current x,y value with a constant value determining the block type. You can see a list of all of these values in Level.java and see examples of this function being called in MyLevelGenerator.java</li>
+			<li>setSpriteTemplate(x,y,SpriteTemplate): Sets an enemy of the passed in SpriteTemplate class to the x,y position. You can see a list of all enemy types in Enemy.java and see an example of this function being called in MyLevelGenerator.java</li>
+		</ul>
+		<p>In addition, this class contains a number of extra functions that show examples of how to create complicated level structures. </p>
+		<p><strong>dk.itu.mario.engine.level.generator.MyLevelGenerator:</strong></p>
+		<p>This class implements the genetic algorithm. The basic structure of the genetic algorithm is given, but the details remain to be completed.</p>
+		<ul>
+			<li>generateLevel(playerProfile): Called by the underlying game engine. Passes in the playerProfile, which contains the fitness evaluation function. This function calls the genetic algorithm and then hands the solution off to MyLevel to create the phenotype level.</li>
+			<li>geneticAlgorithm(playerProfile): Genetic algorithm implementation. The playerProfile is the fitness function. This function does not need to be modified, but it relies on a number of functions that must be customized.</li>
+		</ul>
+		<p>See instructions for the functions in MyLevelGenerator that need to be completed.</p>
+		<hr />
+		<h2>Instructions</h2>
+		<p>You must implement a genetic algorithm that produces level content that is &quot;liked&quot; by different player profiles as given by the three evaluation functions, Scrooge, Killer, and Jumper.</p>
+		<p><strong>Step 1: </strong>Acquire and install Apache Ant (<a href="http://ant.apache.org/">http://ant.apache.org/</a>).</p>
+		<p><strong>Step 2: </strong>In the homework7 directory, build the game engine:</p>
+		<ul>
+			<strong>&gt; ant</strong>
+		</ul>
+		<p><strong>Step 3: </strong>Modify the following files: homework7/src/dk/itu/mario/engine/level/MyDNA.java, homework7/src/dk/itu/mario/engine/level/MyLevel.java, and homework7/src/dk/itu/mario/engine/level/generator/MyLevelGenerator.java. Complete the following functions:</p>
+		<p>MyDNA:</p>
+		<ul>
+			<li>crossover(): This function should return one or more new children from combining the object the function is called on and the object passed in.</li>
+			<li>mutate(): This function should return a single MyDNA instance, which is a copy of the object the function is called on. This copy is randomly modified in some small way and the original should not be modified by side-effect.</li>
+			<li>toString(): optional (for debugging purposes). The default is to return the default chromosome string, but if the MyDNA implementation is more complex, this will need to be altered to provide useful information.</li>
+		</ul>
+		<p>You can create new member variables and functions as necessary to give the genotype representation the complexity needed to represent Super Mario Bros. levels. At a minimum, you will want to define a string symbol language that represents level elements that can be produced by MyLevel.</p>
+		<p>MyLevel:</p>
+		<ul>
+			<li>create(dna, type): This function has been implemented for you, and you are not required to change it. You may modify it with a different DNA representation for a level if you choose.</li>
+		</ul>
+		<p>If the genotype uses a default chromosome string, then create() <em>parses</em> the string and translates elements in the string into setBlock() calls. You may make any new member functions or member variables necessary.</p>
+		<p>MyLevelGenerator:</p>
+		<ul>
+			<li>getPopulationSize(): returns a number, the maximum population size. This function needs only set the return value.</li>
+			<li>numberOfCrossovers(): returns a number, the number of times crossover will occur per iteration. This function needs only set the return value.</li>
+			<li>terminate(): Return true if the search is complete. The population and the number of iterations is passed in.</li>
+			<li>generateRandomIndividual(): Create a new individual with random configuration. </li>
+			<li>selectIndividualsForMutation(): given a population, select and return an ArrayList of individuals that will undergo mutation.</li>
+			<li>pickIndividualForCrossover(): given a population, pick a single individual that will undergo crossover. The excludeMe parameter is an individual that should NOT be picked (this prevents the same individual from being picked twice).</li>
+			<li>competeWithParentsOnly(): return true if the population will be reduced by competing children against parents (i.e., use competeWithParents()). Return false if the population will be reduced by competing all individuals against all other individuals (i.e., use globalCompetition()).</li>
+			<li>competeWithParents(): return a population of the proper size by testing whether each child is more fit than its parents. The original population, the population after mutations and crossover, and a hash that gives the parents of each individual.</li>
+			<li>globalCompetition(): returns a population of the proper size by selecting the most fit individuals from the old population and the new population.</li>
+			<li>evaluateFitness(): optional, can use this as is or make any changes necessary.</li>
+			<li>postProcess(): optional, use this to perform any additional processes on the final solution DNA.</li>
+		</ul>
+		<p><strong>Step 4: </strong>Run your level generator from the homework7 directory: </p>
+		<p>To run the codebase, you must first compile any changes you've made with the command &quot;ant&quot; in the parent directory. Then, if the code compiled correctly, you can run the game by calling: </p>
+		<ul>
+			<p><strong>&gt; java -cp bin dk.itu.mario.engine.PlayCustomized &lt;Player Profile Name&gt;</strong></p>
+		</ul>
+		<p>With the four player profiles you have access to: <br />
+		</p>
+		<ul>
+			<p><strong> &gt; java -cp bin dk.itu.mario.engine.PlayCustomized Scrooge<br />
+				&gt; java -cp bin dk.itu.mario.engine.PlayCustomized Jumper<br />
+				&gt; java -cp bin dk.itu.mario.engine.PlayCustomized Killer<br />
+				&gt; java -cp bin </strong>  <strong>dk.itu.mario.engine.PlayCustomized KillerCollector<br />
+				</strong></p>
+		</ul>
+		<p>When you run the application, an image (output_image.png) will be generated in the parent directory which shows the entire generated level. It will also drop a Java GUI window which allows you to play through the level using the arrow keys, 'a' to run, and space bar to jump.</p>
+		<p>If you die 3 times, Mario will respawn at the top of the screen and fly, allowing you to see the entire level.</p>
+		<hr />
+		<h2>Grading</h2>
+		<ul>
+			<li>10 points: your code generates levels that score &gt;0.8 for the 4 test player profiles and 2 additional &quot;hybrid&quot; player profiles (1 point per player profile, with the average score from 5 levels)<br />
+			</li>
+		</ul>
+		<hr />
+		<h2>Hints</h2>
+		<p>If you modify MyLevel.create(), make sure that it is linear time, or close to it. It will need to be called to turn a genotype into phenotype every time an individual is created (via mutation or crossover) and evaluated.</p>
+		<p>You may wish to create member variables in MyGenerateLevel to keep track of the global fitness of the population and how it has changed over time. You can use this to terminate the search if the search is approach an asymptote or if the global fitness (or max fitness) hasn't changed in a while.</p>
+		<hr />
+		<h2>Submission</h2>
+		<p>To submit your solution, upload your modified MyDNA.java, MyLevel.java, and MyLevelGenerator.java. </p>
+		<p>DO NOT upload the entire game engine.</p>
+	</body>
+
+</html>

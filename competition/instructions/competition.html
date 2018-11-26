@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Competition</title>
+</head>
+
+<body>
+<h1>Full Moba Competition</h1>
+<p>The following homework is optional.</p>
+<p>A <a href="http://en.wikipedia.org/wiki/Multiplayer_online_battle_arena">Multiplayer Online Battle Arena (MOBA)</a> is a form of Real Time Strategy game in which the player controls a powerful agent called the &quot;Hero&quot; in a world populated with simple, weak, fully computer-controlled agents called &quot;Minions.&quot; In this assignment, you will implement the Minions and Heroes for a full MOBA game.</p>
+<p>This optional assignment will pit student solution versus student solution in a round-robin tournament.</p>
+<hr />
+
+<h2>What you need to know</h2>
+<p>There are no changes to the code base from <a href="homework6.html">Homework 6</a>.</p>
+<hr />
+<h2>Instructions</h2>
+<p>To complete this assignment, you must implement Hero AI and Minion AI. There are no restrictions on the number of states you implement in either. <strong>For this assignment, you will implement MyHero and MyMinion in the Mine subdirectory.</strong> Write all of your code in the Mine subdirectory.</p>
+<p>Use your solution to <a href="homework2.html">homework 2</a> to generate a navigation mesh and a corresponding path network. The instructor can provide you with a default solution if necessary. You may also wish to use any path smoothing operations from <a href="homework3.html">homework 3</a> or <a href="homework4.html">homework 4</a>. Use your A* implementation from <a href="homework4.html">homework 4</a>. The instructor can provide you with a default solution in necessary.</p>
+<p>To run the project code, use runversus.py to run your MyHero and MyMinion against a team comprised of the same agent implementations.</p>
+<ul>
+  <strong>&gt; python runversus.py<br />
+  </strong>
+</ul>
+<p>You can test your implementations of MyHero and MyMinion against baselines:</p>
+<ul>
+  <p><strong>&gt; python runversus.py Mine Baseline1<br />
+  &gt; python runversus.py Mine Baseline2<br />
+&gt; python runversus.py Mine Baseline3<br />
+&gt; python runversus.py Baseline1 Baseline2<br />
+    </strong>etc.<strong><br />
+    </strong> </p>
+</ul>
+<p>The baselines in subdirectories Baseline1, Baseline2, and Baseline3 are the baseline heroes from <a href="homework6.html">homework 6</a>, respectively. The baseline Minion from <a href="homework5.html">homework 5 </a>is used throughout. </p>
+<p>The following steps are required to complete the assignment.</p>
+<p><strong>Step 1: </strong>Copy your myCreatePathNetwork function from homework 2 into the <strong>Mine </strong>subdirectory. Copy your astarnavigator.py from homework 4 into the <strong>Mine </strong>subdirectory. Copy mynavigatorhelpers.py functions from homework 3 or homework 4 into the <strong>Mine </strong>subdirectory.</p>
+<p><strong>Step 2: </strong>Implement MyHero and MyMinion in the Mine subdirectory. You may implement MyHero as a finite state machine or using a behavior tree. Implement MyMinion as a finite state machine.</p>
+<hr />
+<h2>Grading</h2>
+<p>This is an optional assignment. You can earn up to 3 extra points on your final grade.</p>
+<p>We will run a round-robin tournament (each submissions played against every other submission). The solution with the best win record will receive the full 3 extra points. The solution with the worst win record will earn 0 extra points. All other solutions will earn a number of points between 0 and 3 based on their respective ranking.</p>
+<p>Each pair of submissions will be run against each other for one game, with each submission randomly assign to a side of the map.</p>
+<p>For pragmatic reasons, games will be limited to 10000 ticks. As a rule of thumb, this should be less than 10 minutes on most computers.</p>
+<hr />
+<h2>Hints</h2>
+<p>Your MyHero implementation from Homework 6 is specialized for Hero vs. Hero combat. You will want to update your MyHero agent to take advantage of strategic and tactical situations that arise in a full MOBA, such as base defense, escorting minions to the enemy base, etc.</p>
+<hr />
+<h2>Submission</h2>
+<p>To submit your solution, upload a zipped version of your Mine directory.</p>
+<p>You should not modify any other files in the game engine.</p>
+<p>DO NOT upload the entire game engine.</p>
+</body>
+
+</html>

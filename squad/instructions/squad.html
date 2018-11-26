@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Squad Homework</title>
+</head>
+
+<body>
+<h1>Squad Homework</h1>
+<p>In this assignment, you will implement squad formations and cover tactics. The player controls one of the avatars and is accompanied by three non-player character companions. The game is a special version of a <a href="http://en.wikipedia.org/wiki/Multiplayer_online_battle_arena">Multiplayer Online Battle Arena (MOBA)</a> in which the player's team must destroy an enemy base. The enemy base generates a steady stream of enemy minions, but there is no enemy hero. The player's base does not produce minions.</p>
+<p>The player's squad includes the player (a hero), two companion heroes, and a new type of agent called a Healer. A Healer is a relatively weak agent that can restore other teammates to full health if touching the other agent.</p>
+<p><a href="squad.png"><img src="squad.png" width="640" border="1" /></a></p>
+<p>On the left half of the arena (shown above), the player and companions <strong>must</strong> maintain a formation. It can be any formation of your chosing. Strategically, you are likely to want to use the formation to quickly dispatch enemy minions as you move across the arena.</p>
+<p>The enemy towers have a very long range, but cannot take many hits. On the right half of the arena, the player and companions <strong>must</strong> use cover tactically to get close to the towers and quickly destroy them.</p>
+<p>When the player passes the middle of the arena into enemy territory, the player will automatically issue a command (bark) to allied agents instructing them to take cover. The player can initiate this bark early by pressing the 'b' button.</p>
+<hr />
+<h2>Formations</h2>
+<p>Implement a formation solution where the Hero performs the primary navigation and the squad mates navigate to offsets around the the Hero. A classical formation might be for the Healer to stay behind the Hero and others to walk beside the Hero. Any formation will suffice.</p>
+<p>By computing offsets to the squad leader's current position, squad mates can minimize navigation computation. Most of the time the squad mate will be in direct line of sight to the offset location, which requires minimal path finding computation. If the offset is ever obscured by an obstacle, the search for a path to the offset may require an A* search, although few nodes may need expanding on a sparse path network. Your AStarNavigator object should already handle this behavior.</p>
+<p>If the offset position relative to the squad leader is inside of an obstacle, which can happen when moving a formation through a narrow space, then agents must be able to compute an alternative offset position.</p>
+<p>The formation should keep squad mates within 5 radii of the leader Hero at all times, until the bark to take cover is issued. Paths of squad mates should never line up (i.e., even though agents don't collide with each other, they should never path to the same point so that they are all in the exactly the same spot).</p>
+<hr />
+<h2>Tactical Cover</h2>
+<p>Tactical cover is about finding a position in the virtual world where obstacles stand between one and something shooting. If one were to imagine a shooting tower or base as a light bulb, then one is in cover when in the shadow of an obstacle. </p>
+<p>To find the shadow, it is convenient to operate in polar coordinates, where the unique location of a point can be expressed as an angle  and a distance from the origin. If the shooter is the origin, we can find the point on an obstacle with the smallest angle  and point on the obstacle with the largest angle  (see image below). Any point that has an angle between the minimum and maximum may be in the shadow. If the point is farther away from the origin than the greatest distance among the min or max point, the point is definitely in the shadow.</p>
+<p><a href="shadow.png"><img src="shadow.png"  border="1" width="640" /></a></p>
+<p>To find the shadows for a shooter: (1) Set the shooter's location as the origin. (2) Convert an obstacle's points to polar coordinates. (3) Find the points with the minimum and maximum angle. (4) Pick the greatest distance of the two points. (5) Record the parameters of the shadow as the two angles and the distance.</p>
+<p>The agent is safe if it is in one of the shadows of every shooter.</p>
+<a href="shadow.png"></a>
+<hr />
+<h2>What you need to know</h2>
+<p>Please consult previous homework instructions for background on the game engine. In addition to the information about the game engine provided there, the following are new elements you need to know about.</p>
+<h3>Barker</h3>
+<p>A Barker is something that can send barks to BarkReceivers.</p>
+<p>Member functions:</p>
+<ul>
+  <li>bark(thebark): makes the agent bark, commanding them with thebark.</li>
+</ul>
+<h3>BarkReceiver</h3>
+<p>A BarkReceiver is something that can hear barks sent by Barkers.</p>
+<p>Member functions:</p>
+<ul>
+  <li>hearBark(thebark): called when another agent barks and passes in thebark, which may be None or anything else.</li>
+  <li>cover(): called when hearBark() instructs the BarkReceiver to take cover.</li>
+</ul>
+<h3>PlayerHero</h3>
+<p>A type of player-controlled agent that inherits from Hero and Barker. The PlayerHero turns into a PlayerGhostAgent when it dies.</p>
+<h3>AutomaticHero</h3>
+<p>A type of player-controlled agent that inherits from PlayerHero. The AutomaticHero will automatically start moving towards the opponent's base after waiting for the squad formation to assemble.</p>
+<h3>PlayerGhostAgent</h3>
+<p>A type of player-controlled agent that inherits from PlayerHero and GhostAgent. The PlayerGhostAgent will pass through obstacles and bullets, but cannot attack.</p>
+<h3>Healer</h3>
+<p>A Healer inherits from MOBAAgent and Barker. When it is touching another agent on the same team, it can heal that other agent up to its maximum hitpoints. The heal functionality can be only used periodically.</p>
+<p>Member functions:</p>
+<ul>
+  <li>heal(agent): Restores the given agent to its maximum hitpoints, if the Healer is touching the other agent. The Healer can also heal itself. </li>
+</ul>
+<h3>MyHealer</h3>
+<p>A specialization of Healer to be modified for the purposes of this assignments. MyHealer is of type StateMachine and also inherits from BehaviorTree. </p>
+<p>Member functions:</p>
+<ul>
+  <li>cover(): Called when the player hero barks at the Healer to take cover. This function needs to be completed.</li>
+</ul>
+<h3>MyCompanionHero</h3>
+<p>A specialization of Hero and Barker and needs to be modified for the purposes of this assignments. MyCompanionHero is of type StateMachine and also inherits from BehaviorTree. </p>
+<p>Member functions:</p>
+<ul>
+  <li>cover(): Called when the player hero barks at the Hero to take cover. This function needs to be completed.</li>
+</ul>
+<h3>MOBAWorld2</h3>
+<p>A type of MOBAWorld, which recognizes when the player wants to bark by pressing the 'b' button.</p>
+<p>Member functions:</p>
+<ul>
+  <li>findCoverPoints(agent): Returns a list of all possible cover points that can be used by the agent. This function needs to be completed.</li>
+</ul>
+<h3>BigTowerBullet</h3>
+<p>A sub-class of TowerBullet that has greater damage, speed, and range. </p>
+<hr />
+<h2>Instructions</h2>
+<p>The following steps are required to complete the assignment.</p>
+<p><strong>Step 1: </strong>Copy your mycreatepathnetwork.py from homework 3. Copy your astarnavigator.py from homework 4. Copy mynavigatorhelpers.py functions from homework 4. Copy your btnode.py from homework 6.</p>
+<p>Note that the agents will use a special type of Navigator called AStarNavigator2, which will use functions from your astarnavigator.py and mynavigatorhelpers.py.</p>
+<p><strong>Step 2:</strong> Edit MyHealer in agents2.py to implement formations and tactical cover.</p>
+<p>MyHealer inherits from StateMachine and BehaviorTree. Implement either a state machine or a behavior tree that makes the agents move in formation. When the player barks to indicate they should break formation, non-player teammates should break formation and use tactical cover to assault the enemy base.</p>
+<p>If using a state machine, make sure the constructor sets the states list and sets the startState variable to the name of the state class that should be entered first (for example Idle). If using a behavior tree, implement code in healerTreeSpec() or myHealerBuildTree() so that one of them returns a non-None value. If healerTreeSpec() or myHealerBuildTree() returns a non-None value, MyHealer will run the behavior tree. Otherwise, it will attempt to change state to the startState.</p>
+<p>Edit MyHealer.cover() so that the healer responds to the player agent's bark to break formation and use tactical cover. </p>
+<p><strong>Step 3:</strong> Edit MyCompanionHero in agents2.py to implement formations and tactical cover.</p>
+<p>MyCompanionHero inherits from StateMachine and BehaviorTree. Implement either a state machine or a behavior tree that makes the agents move in formation. When the player barks to indicate they should break formation, non-player teammates should break formation and use tactical cover to assault the enemy base.</p>
+<p>If using a state machine, make sure the constructor sets the states list and sets the startState variable to the name of the state class that should be entered first (for example Idle). If using a behavior tree, implement code in companionTreeSpec() or myCompanionBuildTree() so that one of them returns a non-None value. If companionTreeSpec() or myCompanionBuildTree() returns a non-None value, MyCompanionHero will run the behavior tree. Otherwise, it will attempt to change state to the startState.</p>
+<p>Edit MyCompanionHero.cover() so that the healer responds to the player agent's bark to break formation and use tactical cover. </p>
+<p>Test your implementations using rungame.py:</p>
+<ul>
+  <p><strong>&gt; python rungame.py PlayerHero<br />
+             &gt; python rungame.py AutomaticHero<br />
+  </strong></p>
+</ul>
+<p>PlayerHero initializes the game using a fully human-controlled character, with the same controls (shooting, jumping, area of effect) as in homework 6. In addition, pressing 'b' will cause the player to bark at its teammates to take cover. </p>
+<p>AutomaticHero is the player character that will be used to grade this assignment. It will wait for a short amount of time to allow its teammates to assemble a formation, then it will head straight towards the enemy base. AutomaticHero will not use any attacks by itself. If necessary for debugging, you can interrupt AutomaticHero's movement to control it yourself, although note that AutomaticHero will use the navigation mesh while it's alive instead of heading straight to its destination.</p>
+<hr />
+<h2>Grading</h2>
+<p>The AutomaticHero will be used as the player when grading this homework, and the player will not be given any human input.</p>
+<p>The following grading criteria will be used:</p>
+<ul>
+  <li>4 points: Implement squad formations, such that the two companion heroes and the healer stay in a formation around the player and attempt to maintain the formation as much as possible (without collisions) when the player navigates around obstacles. Agents should always be within 5 radii of the PlayerHero and never navigating to (or positioned at) the exact same point in space. The squad only needs to be maintained before the command to take cover is issued.</li>
+  <li>4 points: Implement tactical cover, finding cover points behind at least 2 obstacles on the enemy's side of the arena. These points should be located using an algorithm such as the one described above (do not hard-code cover points that only work for the provided arena). Also, do not assume that obstacles will only be on the left side of the base like in the provided arena; we will test your code with obstacles on other sides of the enemy base, so make sure to test these cases.</li>
+  <li>2 points: Destroy the enemy base before all members of the player's team are killed. It does not matter if the player's base is destroyed.</li>
+</ul>
+<hr />
+<h2>Submission</h2>
+<p>To submit your solution, upload all files you modified.</p>
+<p>DO NOT upload the entire game engine.</p>
+</body>
+
+</html>

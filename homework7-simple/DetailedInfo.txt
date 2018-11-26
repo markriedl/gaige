@@ -1,0 +1,111 @@
+StartTime = -17
+RightMove: StTime = 12 EdTime = 14
+RightMove: StTime = 27 EdTime = 15
+RightMove: StTime = 29 EdTime = 16
+RightMove: StTime = 31 EdTime = 17
+Jump:  StTime = 48 EdTime = 59
+RightMove: StTime = 50 EdTime = 30
+RightMove: StTime = 64 EdTime = 33
+RightMove: StTime = 68 EdTime = 34
+RightMove: StTime = 76 EdTime = 35
+Jump:  StTime = 75 EdTime = 86
+RightMove: StTime = 95 EdTime = 36
+RightMove: StTime = 97 EdTime = 38
+Jump:  StTime = 94 EdTime = 105
+RunState: StTime = 116 EdTime = 141
+Jump:  StTime = 127 EdTime = 145
+RightMove: StTime = 123 EdTime = 64
+LeftMove: StTime = 150 EdTime = 26
+RunState: StTime = 173 EdTime = 198
+RightMove: StTime = 178 EdTime = 85
+Jump:  StTime = 186 EdTime = 200
+LeftMove: StTime = 200 EdTime = 35
+Jump:  StTime = 210 EdTime = 222
+RightMove: StTime = 210 EdTime = 103
+LeftMove: StTime = 229 EdTime = 44
+LittleState: StTime = -17 EdTime = 267
+Totaltime = 284
+Jump:  StTime = 246 EdTime = 267
+Die:  Gap 
+NEWLEVELSTART
+StartTime = -17
+RightMove: StTime = 8 EdTime = 117
+RightMove: StTime = 23 EdTime = 118
+RightMove: StTime = 25 EdTime = 119
+RightMove: StTime = 27 EdTime = 120
+Jump:  StTime = 26 EdTime = 37
+RightMove: StTime = 29 EdTime = 133
+RightMove: StTime = 43 EdTime = 134
+RightMove: StTime = 45 EdTime = 135
+RightMove: StTime = 50 EdTime = 136
+Jump:  StTime = 50 EdTime = 61
+RightMove: StTime = 52 EdTime = 145
+RunState: StTime = 79 EdTime = 103
+Jump:  StTime = 88 EdTime = 106
+RightMove: StTime = 86 EdTime = 169
+LeftMove: StTime = 111 EdTime = 74
+RunState: StTime = 145 EdTime = 176
+Jump:  StTime = 163 EdTime = 176
+RightMove: StTime = 155 EdTime = 191
+RightMove: StTime = 187 EdTime = 192
+Jump:  StTime = 187 EdTime = 198
+RightMove: StTime = 189 EdTime = 201
+LeftMove: StTime = 202 EdTime = 84
+RightMove: StTime = 213 EdTime = 204
+RightMove: StTime = 217 EdTime = 205
+RightMove: StTime = 219 EdTime = 206
+RightMove: StTime = 225 EdTime = 207
+Jump:  StTime = 225 EdTime = 236
+RightMove: StTime = 227 EdTime = 216
+RunState: StTime = 248 EdTime = 267
+Jump:  StTime = 254 EdTime = 271
+RightMove: StTime = 252 EdTime = 236
+LeftMove: StTime = 273 EdTime = 86
+RightMove: StTime = 278 EdTime = 242
+RightMove: StTime = 285 EdTime = 243
+Jump:  StTime = 291 EdTime = 302
+RightMove: StTime = 293 EdTime = 256
+LeftMove: StTime = 307 EdTime = 95
+RunState: StTime = 322 EdTime = 344
+Jump:  StTime = 331 EdTime = 349
+RightMove: StTime = 327 EdTime = 284
+Jump:  StTime = 382 EdTime = 399
+LittleState: StTime = -17 EdTime = 401
+Totaltime = 418
+Die:  Gap 
+NEWLEVELSTART
+StartTime = -17
+RightMove: StTime = 21 EdTime = 298
+RightMove: StTime = 36 EdTime = 299
+Jump:  StTime = 36 EdTime = 45
+RightMove: StTime = 38 EdTime = 307
+RightMove: StTime = 51 EdTime = 308
+RightMove: StTime = 53 EdTime = 309
+RightMove: StTime = 55 EdTime = 310
+Jump:  StTime = 54 EdTime = 65
+RightMove: StTime = 68 EdTime = 311
+RightMove: StTime = 70 EdTime = 312
+RightMove: StTime = 74 EdTime = 313
+RightMove: StTime = 76 EdTime = 315
+Jump:  StTime = 73 EdTime = 82
+RunState: StTime = 99 EdTime = 119
+Jump:  StTime = 106 EdTime = 124
+RightMove: StTime = 102 EdTime = 341
+LeftMove: StTime = 136 EdTime = 111
+RunState: StTime = 145 EdTime = 175
+Jump:  StTime = 163 EdTime = 176
+RightMove: StTime = 155 EdTime = 363
+RightMove: StTime = 185 EdTime = 364
+RightMove: StTime = 187 EdTime = 366
+Jump:  StTime = 184 EdTime = 195
+RunState: StTime = 208 EdTime = 230
+LittleState: StTime = -17 EdTime = 237
+Totaltime = 254
+Jump:  StTime = 216 EdTime = 237
+Die:  Gap 
+NEWLEVELSTART
+StartTime = -17
+Totaltime = 354
+RightMove: StTime = 8 EdTime = 695
+RunState: StTime = 66 EdTime = 337
+LittleState: StTime = -17 EdTime = 337

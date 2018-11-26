@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Homework 8</title>
+</head>
+
+<body>
+<h1>Reinforcement Learning</h1>
+<p>The purpose of this exercise is to implement an agent using reinforcement learning that can play a simple game to rescue humans from a building that has been flooded with radiation.</p>
+<p>Reinforcement learning is a technique of using trial-and-error episodes to learn how to play a game as close to optimally as possible. By using reinforcement learning in a game, we are trying to play as well as (or better) than humans. Variants of reinforcement learning have been used to play Backgammon, Go, and other board games at skill levels superior to humans. Reinforcement learning has been used to train agents to play Atari games at (sometimes better) human skill levels. </p>
+<p>Our agent will learn to play a simple game called &quot;radiation world&quot; which was originally designed for rescue scenarios. In radiation world, humans have been trapped in a building because of a radiation leak. There are areas that are irradiated that humans cannot safely move through. However a robot can move safely through them. Your robot must navigate the building to reach each human.</p>
+<p>The following is an example game map. Black indicates walls. Red indicates areas with radiation. Blue indicates grid cells containing humans. Green is the base station for the robot.</p>
+<table width="300" border="1">
+  <tr>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td align="center" bgcolor="red">&nbsp;</td>
+    <td align="center" bgcolor="blue">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td align="center" bgcolor="blue">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td align="center" bgcolor="red">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td bgcolor="red" align="center">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td align="center"  bgcolor="green" >&nbsp;</td>
+    <td bgcolor="red" align="center">&nbsp;</td>
+    <td align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+  </tr>
+  <tr>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+    <td bgcolor="black" align="center">&nbsp;</td>
+  </tr>
+</table>
+<p>The agent can move left, right, up, or down. If it enters a grid cell with a human, then that human is saved.</p>
+<p>One last thing: there is an enemy robot roaming around the building that will try to hurt the agent if they are ever in the same location for more than one turn. Our agent has one additional action, &quot;smash,&quot; which can destroy the enemy robot.</p>
+<p>The goal of a reinforcement learning agent is to get as many points as it can during a game. Thus, the definition of optimal behavior depends on how score is computed. The default way score is computed is as follows:</p>
+<ul>
+  <li>20 points per turn for each human rescued</li>
+  <li>10 points for being at the base station</li>
+  <li>-50 points for being hurt by the enemy robot</li>
+  <li>-20 points for being in radiation</li>
+  <li>-10 points per turn that the enemy robot is no longer functional</li>
+  <li>-1 point per turn that the agent is not at the base or in radiation</li>
+</ul>
+<p>(Yes, you lose points if you kill the enemy robot, so with this scoring function the bot will need to learn to avoid it instead.)</p>
+<p>You will implement the Q-learning algorithm and test your agent in the radiation world.</p>
+<hr />
+<h2>What you need to know</h2>
+<p>Below are the important bits of information about objects that you will be working with or need to know about for this assignment.</p>
+<h3>Environment</h3>
+<p>The Environment describes how the simulated world works and also how reward (score) is defined.</p>
+<p>Member variables:</p>
+<ul>
+  <li>map: Gives the physical environment as a 2D array. map[y][x] gives the (x, y) position.
+    <ul>
+      <li>1 = walls</li>
+      <li>2 = radiation</li>
+      <li>4 = goal (non-terminal), a place that reward can be gained over and over again (not used)</li>
+      <li>10 = goal (terminal), a place that reward can be gained once and the game ends (not used)</li>
+      <li>5-9 = unique identifiers for people to be rescued</li>
+    </ul>
+  </li>
+  <li>width: the width of the map</li>
+  <li>height: the height of the map</li>
+  <li>influenceMap: tells the enemy agent how to move around the environment so that it doesn't run into walls. Each cell in the 2D array indicates the direction the enemy should move.</li>
+  <li>currentState: the state of the world. The state is an array where each index indicates a different feature of the world
+    <ul>
+      <li>index 0: the bot's x location</li>
+      <li>index 1: the bot's y location</li>
+      <li>index 2: a boolean indicating whether the enemy is alive or not</li>
+      <li>index 3: the enemy's x location</li>
+      <li>index 4: the enemy's y location</li>
+      <li>index 5: a boolean indicating whether the enemy is torturing the bot</li>
+      <li>indices 6-9: a boolean indicating whether the person with that unique identifier has been rescued (True = rescued)</li>
+    </ul>
+  </li>
+  <li>previousState: the previous state of the world</li>
+  <li>startState: the default start state (unless a random start state is generated)</li>
+  <li>reward: the amount of points obtained at a goal.</li>
+  <li>rescue: the amount of points obtained for each survior rescued.</li>
+  <li>penalty: the amount of points for not being in a goal position.</li>
+  <li>pain: the amount of points for being hurt by the enemy.</li>
+  <li>radiation: the amount of points for being in a radiation cell.</li>
+  <li>dead: the amount of points if the enemy is dead.</li>
+  <li>counter: keeps tracks of the number of turns.</li>
+  <li>moveTimer: how often the enemy can move.</li>
+  <li>enemyMode: Indicates how the enemy moves:
+    <ul>
+      <li>0 = enemy doesn't move</li>
+      <li>1 = enemy moves according to the influenceMap</li>
+      <li>2 = enemy moves randomly</li>
+      <li>3 = enemy chases the bot</li>
+      <li>4 = enemy gets instructions from an external source</li>
+    </ul>
+  </li>
+  <li>nextEnemyMove: indicates which direction the enemy should move if enemyMode = 4.</li>
+  <li>randomStart: should a random start state be used?</li>
+  <li>lastActionValue: the last action the bot performed.</li>
+  <li>verbose: How much logging information to print. Don't refer to verbose directly, but use isVerbose()
+    <ul>
+      <li>0 or False= none</li>
+      <li>1 = print state tuple</li>
+      <li>2 = print map</li>
+    </ul>
+  </li>
+</ul>
+<p>Member functions:</p>
+<ul>
+  <li>validActions(): Return a list of valid actions: [0, 1, 2, 3, 4]
+    <ul>
+      <li>0 = up</li>
+      <li>1 = down</li>
+      <li>2 = left</li>
+      <li>3 = right</li>
+      <li>4 = smash (bot only)</li>
+    </ul>
+  </li>
+  <li>actionToString(act): return the string name for an action.</li>
+  <li>env_start(): Starts the simulation</li>
+  <li>env_step(thisAction): Update the world based on the given action to be performed by the agent. This function also computes and executes the action the enemy agent performs (if any). The current state is updated by side effect. The function returns the next observation (state) and the immediate reward obtained.</li>
+  <li>end_reset(): start the simulation over again.</li>
+  <li>checkTerminal(): determines whether the current state is a terminal state.</li>
+  <li>executeAction(theAction): updates the current state based on the effects of the given action. You probably shouldn't call this directly and use env_step() instead.</li>
+  <li>calculateReward(theAction): looks at the current state and the action passed in (which should be the action just executed by the bot) and returns the amount of immediate reward.</li>
+  <li>printEnvironment(): print the world state in human-readable form.</li>
+  <li>isVerbose(): use this to check the verbose variable because it handles False and numbers.</li>
+</ul>
+<h3>Action</h3>
+<p>A container class for passing action information around. The member, actionValue, contains a numerical value referring to the action.</p>
+<h3>Observation</h3>
+<p>A container class for passing observation (state) information around. The member, worldState, contains the state tuple. Other member variables are not used.</p>
+<h3>Reward</h3>
+<p>A container class for passing reward information around. The member, rewardValue, contains the reward information as a floating-point value.</p>
+<h3>Agent</h3>
+<p>The agent class controls the bot and implements the Q-learning algorithm.</p>
+<p>Member variables:</p>
+<ul>
+  <li>lastAction: the last action performed.</li>
+  <li>lastObservation: the last observation (state) received.</li>
+  <li>epsilon: how often to use the policy to act versus taking a random action.</li>
+  <li>gamma: the discount factor</li>
+  <li>learningRate: the learning rate</li>
+  <li>v_table: the value table, a 2D array where each row is a possible state and each column is a possible action. Implemented as a dictionary where key is state and values are arrays of values where the kth value in the array is for the kth action in Environment.validActions()</li>
+  <li>gridEnvironment: a pointer to an Environment object</li>
+  <li>initialObs: the initial state</li>
+  <li>currentObs: the current state</li>
+  <li>numSteps: how many actions should the agent take before quitting.</li>
+  <li>totalReward: total reward received.</li>
+  <li>verbose: amount of logging to print. Use isVerbose() to query the variable.
+    <ul>
+      <li>0 or False = none</li>
+      <li>1 or True = do logging</li>
+    </ul>
+  </li>
+  <li>numActions: the number of possible actions in the environment</li>
+</ul>
+<p>Member functions:</p>
+<ul>
+  <li>initializeVtableStateEntry(state): for a state, make sure there is a corresponding row in the v_table, initialized to 0.0 for all actions.</li>
+  <li>executePolicy(observation): Given an initial observation (state), execute the policy (v_table).</li>
+  <li>qLearn(observation): Given an initial observation (state), run the agent for numSteps time steps and update the v_table according to the Q-learning algorithm.</li>
+  <li>updateVtable(newState, lastState, newAction, lastAction, reward, terminal, availableActions): Used by qLearn() to update the v_table. Everything needed to perform that operation is provided as arguments. The v_table is updated as a side-effect. No return value.<strong> Must be completed by the student.
+    </strong>
+    <ul>
+      <li>newState: the state encountered after executing newAction</li>
+      <li>lastState: the state the agent just left when executing newAction</li>
+      <li>newAction: the action the agent just performed</li>
+      <li>lastAction: the last action the agent performed</li>
+      <li>reward: the amount of immediate reward received for performing newAction</li>
+      <li>terminal: boolean, did the agent just hit a terminal state?</li>
+      <li>availableActions: what actions can be performed in this new state?</li>
+    </ul>
+  </li>
+  <li>eGreedy(observation): Pick a random action epsilon percent of the time, or pick the greedy action otherwise. Return the action picked. <strong>To be completed.</strong></li>
+  <li>greedy(observation): Pick and return the best action according to the v_table.<strong> To be completed.</strong></li>
+  <li>agent_reset(): restart the agent and the environment.</li>
+  <li>copyObservation(obs): make a new data structure in memory with the same information as the old observation.</li>
+  <li>calculateFlatState(theState): make sure the state is a tuple.</li>
+  <li>isVerbose(): determine how much logging to print. Use this instead of querying verbose directly.
+  </li>
+</ul>
+<h3>Controller</h3>
+<p>This is a file that contains code to launch the game, train the agent, and test the agent. The code first trains the agent over a number of episodes. After each episode it tests the policy and reports the progress. After training is complete, the environment is reset it runs the agent for a number of steps, printing out the results of each step. Finally, optionally, the human can play the game as the bot or as the enemy robot.</p>
+<p>Parameters:</p>
+<ul>
+  <li>episodes: number of episodes to train the agent.</li>
+  <li>trainingReportRate: how many episodes pass before printing out a report during training</li>
+  <li>play: Set to run in interactive mode:
+    <ul>
+      <li>0 = no interactive mode</li>
+      <li>1 = play as the bot</li>
+      <li>2 = play as the enemy</li>
+    </ul>
+  </li>
+</ul>
+<p>Other things you may want to experiment with:</p>
+<ul>
+  <li>gridEnvironment.enemyMode</li>
+  <li>gridEnvironment.verbose</li>
+  <li>gridEnvironment.randomStart</li>
+  <li>gridAgent.verbose</li>
+  <li>gridAgent.numSteps</li>
+</ul>
+<hr />
+<h2>Instructions</h2>
+<p>ExecutePolicy() and part of qLearn() have already been provided. You must complete the implementation of the Q-learning algorithm.</p>
+<p><strong>Step 1:</strong> Implement greedy(). Test it by using testgreedy.py.</p>
+<p>(testgreedy.py doesn't verify the correctness of your implementation but gives a framework for easily inspecting a value table and visually verifying that greedy() is returning the correct result).</p>
+<ul>
+  <strong>&gt; python testgreedy.py</strong>
+</ul>
+<p><strong>Step 2:</strong> Implement egreedy(). Test it by using testegreedy.py.</p>
+<p>(testegreedy.py works similarly to testgreedy.py except one must vary the epsilon value and verify the results by hand).</p>
+<ul>
+  <strong>&gt; python testegreedy.py</strong>
+</ul>
+<p><strong>Step 3:</strong> Implement updateVtable(). Test it using testvtable.py.</p>
+<p>(testvtable.py doesn't verify the correctness of your implementation but gives a framework for easily inspecting a value table after executing a sequence of actions.)</p>
+<ul>
+  <p><strong>&gt; python testvtable.py</strong></p>
+</ul>
+<p><strong>Step 4: </strong>Test your complete implementation:</p>
+<ul>
+  <strong>&gt; python Controller.py</strong>
+</ul>
+<p>Additional testing can be done by making  your own maps.</p>
+<p><strong>Step 5: </strong>Write a report answering the following questions.</p>
+<ol>
+  <li>Why doesn't the bot avoid the radiation  in the default map? What would have to be different for the bot to avoid as much of it as possible?</li>
+  <li>Under the default reward, the bot runs away from the enemy. What is the smallest value for enemyDead that would make it so that the bot is willing to kill the enemy if they cross paths? Explain why. What is the smallest value for enemyDead that would induce the bot to seek out the enemy and kill it? Explain why.</li>
+  <li>What effect does switching enemyMode from 1 (follow the influence map) to 2 during training have on the behavior of the bot, if any? How does more or fewer training episodes help or hurt? Hint: experiment with play = 2.</li>
+</ol>
+<hr />
+<h2> Grading</h2>
+<p>This homework assignment is worth 10 points. Your solution will be graded by autograder. The autograder will independently test your greedy(), egreedy(), and updateVtable() implementations.</p>
+<ul>
+  <li>2 points: correct implementation of greedy()</li>
+  <li>5 points: correct implementation of updateVtable() and eGreedy().
+    <ul>
+      <li>2 points for updating the Q values for an arbitrary execution sequence; </li>
+      <li>1 point for a Q-table that produces the correct execution sequence; </li>
+      <li>2 points for computing correct Q values after training.</li>
+    </ul>
+  </li>
+  <li>3 points: report</li>
+</ul>
+<hr />
+<h2>Submission</h2>
+<p>To submit your solution, upload your modified Agent.py and your report.</p>
+<p>You may modify Controller.py and Environment.py for testing, but do not submit your changes to these files. The grader will use its own version of Controller.py and Environment.py.</p>
+<p>DO NOT upload the entire directory.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</body>
+
+</html>
