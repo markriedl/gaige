@@ -5,7 +5,7 @@ The Game AI Game Engine (GAIGE) is a set of instructional programming assignment
 
 GAIGE is a game engine built in python on top of the PyGame library that provides basic 2-D game functionality. Through a series of assignments, one will build up all the AI components needed to have AI agents play a game based roughly on the Multiplayer Online Battle Arena (MOBA) genre of game.
 
-![Screenshot of GAIGE engine](https://github.com/markriedl/gaige/images/icon48.png "The GAIGE Game Engine")
+![Screenshot of GAIGE engine](https://github.com/markriedl/gaige/blob/master/images/gaige.png? "The GAIGE Game Engine")
 
 # Installation
 
